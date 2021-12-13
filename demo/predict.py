@@ -18,7 +18,7 @@ valid_types = get_valid_types(TYPENAME)
 label_enc = LabelEncoder()
 label_enc.fit(valid_types)
 
-MAX_COL_COUNT = 6
+MAX_COL_COUNT = 20
 topic_dim = 400
 pre_trained_loc = './pretrained_sato'
 device = 'cpu'
@@ -32,6 +32,7 @@ for f_g in sherlock_feature_groups:
                                           'configs', 'feature_groups', 
                                           "{}_col.tsv".format(f_g)),
                                            sep='\t', header=None, 
+                                           encoding='UTF-8',
                                            index_col=0)[1])
 
 
@@ -69,7 +70,8 @@ def extract(df):
 
     # sherlock vectors
     sherlock_features = extract_sherlock_features(df_dic)
-    for f_g in feature_group_cols:
+    print(f"{sherlock_features = }")
+    for i, f_g in enumerate(feature_group_cols):
         temp = sherlock_features[feature_group_cols[f_g]].to_numpy()
         temp = np.vstack((temp, np.zeros((MAX_COL_COUNT - n, temp.shape[1])))).astype('float')
         temp = np.nan_to_num(temp)
