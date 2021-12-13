@@ -55,17 +55,29 @@ def upload_file():
     </form>
     '''
 
+@app.route('/upload-and-predict', methods = ['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        raise Exception('File not found')
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        res = evaluate(df)
+        return res
+
 
 
 
 def extract_feature(df):
     pass
 
+
+
 @app.route('/predict',  methods=['POST'])
 def predict():
 
-
-    
     filename = request.form.get('fId')
     df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     res = evaluate(df)
@@ -80,16 +92,14 @@ def predict():
                             showButton=False)
 
 
-
-
 @app.route('/uploads/<filename>')
 def process_file(filename):
     df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    if df.shape[0]>200 or df.shape[1] > 6:
-        return render_template('error.html', 
-                             cols = df.shape[1],
-                             rows = df.shape[0])
+    # if df.shape[0]>200 or df.shape[1] > 6:
+    #     return render_template('error.html', 
+    #                          cols = df.shape[1],
+    #                          rows = df.shape[0])
 
     return render_template('table.html', 
                             tables=[df.to_html(classes="table table-striped table-bordered",
