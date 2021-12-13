@@ -7,7 +7,7 @@ SHERLOCKPATH = os.environ['SHERLOCKPATH']
 
 embedding_loc = os.path.join(SHERLOCKPATH, 'pretrained', 'glove.6B')
 
-word_vectors_f = open(os.path.join(embedding_loc ,'glove.6B.50d.txt'))
+word_vectors_f = open(os.path.join(embedding_loc ,'glove.6B.50d.txt'), encoding="utf8")
 word_to_embedding = {}
 for l in word_vectors_f:
     term, vector = l.strip().split(' ', 1)
@@ -47,6 +47,7 @@ def extract_word_embeddings_features(values):
         for i in range(num_embeddings): f['word_embedding_mode_{}'.format(i)] = np.nan
         
         #f['dummy'] = 0
+        print('extract_word_embeddings_features -> ZERO')
         return f
     
     else:
@@ -70,4 +71,5 @@ def extract_word_embeddings_features(values):
         
         #f['dummy'] = 1
         
+        print('extract_word_embeddings_features : filled')
         return f

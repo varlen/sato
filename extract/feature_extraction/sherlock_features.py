@@ -14,6 +14,9 @@ n_samples = 1000
 vec_dim   = 400
 
 def extract_sherlock_features(df_dic):
+
+    print('extract_sherlock_features')
+
     df, locator, dataset_id = df_dic['df'], df_dic['locator'], df_dic['dataset_id']
 
     all_field_features = []
@@ -23,8 +26,9 @@ def extract_sherlock_features(df_dic):
 
         all_field_features.append(single_field_feature_set)
 
-
+    print('----> Columns')
     for field_order, field_name in enumerate(df.columns):
+        print(f"{field_order=} | {field_name=}")
         v = df[field_name]
 
         field_id = field_order
@@ -49,15 +53,26 @@ def extract_sherlock_features(df_dic):
 
             f_ch = extract_bag_of_characters_features(raw_sample, n_values)
             f_word = extract_word_embeddings_features(raw_sample)
+            # This uses Gensim
             f_par = infer_paragraph_embeddings_features(raw_sample, vec_dim)
+            # This one uses NLTK
             f_stat = extract_bag_of_words_features(raw_sample)
+
+            assert len(f_ch) > 0
+            assert len(f_word) > 0
+            assert len(f_par) > 0
+            assert len(f_stat) > 0 
+
             for feature_set in [ f_ch, f_word, f_par, f_stat ]:
                 for k, v in feature_set.items():
                     all_field_features[field_order][k] = v
 
+            print(f"{all_field_features = }\n")
+
 
         except Exception as e:
             print('Single field exception:', e)
+            print(e.__traceback__)
             continue
 
 

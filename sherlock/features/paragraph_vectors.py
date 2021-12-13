@@ -26,6 +26,7 @@ def train_paragraph_embeddings_features(columns, dim):
     print('Training paragraph vectors with vector dimension: ', dim)
     
     # TRAN PARAGRAPH VECTORS MODEL
+    
     model = Doc2Vec(columns, dm=0, negative=3, workers=8, vector_size=dim, epochs=20, min_count=2, seed=13)
     
     model_file = os.path.join(SHERLOCKPATH, 'pretrained', 'par_vec_trained_{}.pkl'.format(dim))
@@ -40,15 +41,20 @@ def infer_paragraph_embeddings_features(data, dim):
     embeddings = []
     
     # INFER PARAGRAPH VECTORS
-    model = Doc2Vec.load(os.path.join(SHERLOCKPATH, 'pretrained', 'par_vec_trained_{}.pkl'.format(dim))) 
+    print('paragraph_vectors -> before Doc2Vec.load')
+    model_path = os.path.join(SHERLOCKPATH, 'pretrained', 'par_vec_trained_{}.pkl'.format(dim))
+    print(f'model path : {model_path}')
+    model = Doc2Vec.load(model_path)
+    print('Model loaded')
 
     f = OrderedDict()
     
     if len(vec) > 1000:
         vec = random.sample(vec, 1000)
         
+    print('paragraph_vectors -> before infer_vector')
     vec = pd.Series(model.infer_vector(vec, steps=20, alpha=0.025))
-    
+    print('paragraph_vectors -> infer_vector done')
     
     for i in range(len(vec)):
         f['par_vec_{}'.format(i)] = vec[i]

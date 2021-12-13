@@ -6,6 +6,8 @@ from collections import OrderedDict
 
 # Input: a single column in the form of pandas series
 def extract_bag_of_characters_features(data, n_val):
+
+    print("extract_bag_of_characters_features")
     
     characters_to_check = [ '['+  c + ']' for c in string.printable if c not in ( '\n', '\\', '\v', '\r', '\t', '^' )] + ['[\\\\]', '[\^]']
     
@@ -37,7 +39,7 @@ def extract_bag_of_characters_features(data, n_val):
     f['none-agg-percent'] = n_none / len(data)
     f['none-agg-num'] = n_none
     f['none-agg-all'] = (n_none == len(data))
-    #print(len(f))
+    print("bag of characters size", len(f))
     return f
 
 
