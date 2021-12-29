@@ -4,6 +4,7 @@ import pandas as pd
 from flask import Flask, flash, request, redirect, url_for, render_template
 from werkzeug.utils import secure_filename
 from predict import evaluate
+import json
 
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['csv'])
@@ -56,16 +57,21 @@ def upload_file():
     '''
 
 @app.route('/upload-and-predict', methods = ['POST'])
-def upload_file():
+def upload_and_predict_file():
+    print(request.files)
     if 'file' not in request.files:
         raise Exception('File not found')
     file = request.files['file']
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        df = pd.read_csv(
+            os.path.join(app.config['UPLOAD_FOLDER'], filename),
+            quotechar="'",
+            escapechar="\\")
         res = evaluate(df)
-        return res
+        print(list(res))
+        return json.dumps(list(res))
 
 
 
